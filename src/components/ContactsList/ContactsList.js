@@ -1,10 +1,15 @@
-import { connect } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import PropTypes from 'prop-types';
 import ContactsListItem from '../ContactsListItem';
 import phonebookActions from '../../redux/phonebook/phonebook-actions';
+import { getVisibleContacts } from '../../redux/phonebook/phonebook-selectors';
 import styles from './ContactsList.module.css';
 
-const ContactsList = ({ contacts, onDelete }) => {
+function ContactsList() {
+  const contacts = useSelector(getVisibleContacts);
+  const dispatch = useDispatch();
+  const deleteItem = id => dispatch(phonebookActions.deleteContact(id));
+
   return (
     <ul className={styles.list}>
       {contacts.map(contact => {
@@ -12,13 +17,13 @@ const ContactsList = ({ contacts, onDelete }) => {
           <ContactsListItem
             key={contact.id}
             contact={contact}
-            onDelete={() => onDelete(contact.id)}
+            onDelete={() => deleteItem(contact.id)}
           />
         );
       })}
     </ul>
   );
-};
+}
 
 ContactsList.propTypes = {
   contacts: PropTypes.arrayOf(
@@ -31,20 +36,13 @@ ContactsList.propTypes = {
   onDelete: PropTypes.func,
 };
 
-const getVisibleContacts = (contacts, filter) => {
-  const normalizedFilter = filter.toLowerCase();
+// const mapStateToProps = ({ contacts: { items, filter } }) => ({
+//   contacts: getVisibleContacts(items, filter),
+// });
 
-  return contacts.filter(contact =>
-    contact.name.toLowerCase().includes(normalizedFilter),
-  );
-};
+// const mapDispatchToProps = dispatch => ({
+//   onDelete: id => dispatch(phonebookActions.deleteContact(id)),
+// });
 
-const mapStateToProps = ({ contacts: { items, filter } }) => ({
-  contacts: getVisibleContacts(items, filter),
-});
-
-const mapDispatchToProps = dispatch => ({
-  onDelete: id => dispatch(phonebookActions.deleteContact(id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(ContactsList);
+// export default connect(mapStateToProps, mapDispatchToProps)(ContactsList);
+export default ContactsList;
