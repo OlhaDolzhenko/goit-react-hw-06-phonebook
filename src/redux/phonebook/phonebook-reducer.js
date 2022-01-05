@@ -10,14 +10,7 @@ const initialContacts = [
 ];
 
 const items = createReducer([...initialContacts], {
-  [actions.addContact]: (state, action) => {
-    if (state.find(contact => contact.name === action.payload.name)) {
-      alert(`${action.payload.name} is already in contacts`);
-      return state;
-    } else {
-      return [...state, action.payload];
-    }
-  },
+  [actions.addContact]: (state, action) => [...state, action.payload],
   [actions.deleteContact]: (state, action) =>
     state.filter(contact => contact.id !== action.payload),
 });
